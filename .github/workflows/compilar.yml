@@ -1,0 +1,27 @@
+name: Compilar PDF
+on:
+  push:
+    paths-ignore:
+      - "**.pdf"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  compilar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: xu-cheng/latex-action@v3
+        with:
+          root_file: main.tex
+
+      - name: Guardar el PDF en el repositorio
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -f main.pdf
+          git diff --cached --quiet || git commit -m "PDF actualizado"
+          git push
